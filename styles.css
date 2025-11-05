@@ -1,0 +1,147 @@
+:root {
+  --bg: #0b121b;
+  --panel: #111a26;
+  --text: #e6edf3;
+  --muted: #a9b4c0;
+  --accent: #5bc0de;
+  --accent-2: #91e6b3;
+  --danger: #ff6b6b;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+.site-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #1e2a38;
+  background: linear-gradient(180deg, #0d1520, #0a1119);
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+.site-header .sub {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.search form {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+#station-input {
+  min-width: 280px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #223244;
+  background: #0e1723;
+  color: var(--text);
+}
+button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #214;
+  background: linear-gradient(180deg, #1b2a3b, #172436);
+  color: #fff;
+  cursor: pointer;
+}
+button:hover {
+  filter: brightness(1.1);
+}
+#status {
+  min-height: 20px;
+  margin-top: 8px;
+  color: var(--muted);
+}
+.table-wrap {
+  overflow: auto;
+  border: 1px solid #1e2a38;
+  border-radius: 8px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1e2a38;
+}
+th {
+  position: sticky;
+  top: 0;
+  background: #0f1927;
+  text-align: left;
+  font-weight: 600;
+}
+.placeholder {
+  color: var(--muted);
+}
+.loader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #000a;
+  gap: 12px;
+}
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #0000;
+  border-right-color: var(--accent);
+  border-top-color: var(--accent-2);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.events {
+  margin-top: 24px;
+}
+.events-list {
+  display: grid;
+  gap: 10px;
+  padding-left: 18px;
+}
+.events-list li {
+  color: var(--muted);
+}
+.event-card {
+  list-style: disc;
+}
+.event-card b {
+  color: var(--text);
+}
+.error {
+  color: var(--danger);
+}
+.success {
+  color: var(--accent-2);
+}

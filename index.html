@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Train info – Trafikverket</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="env.js" defer></script>
+    <script src="api.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Train departures</h1>
+      <p class="sub">Data from Trafikverket's API</p>
+    </header>
+
+    <main>
+      <section class="search">
+        <form id="search-form">
+          <label for="station-input">Station</label>
+          <input
+            id="station-input"
+            name="station"
+            list="stations"
+            autocomplete="off"
+            placeholder="Search station (e.g., Stockholm C)"
+          />
+          <datalist id="stations"></datalist>
+          <button id="search-btn" type="submit">Show</button>
+        </form>
+        <div id="status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="results">
+        <h2>Departures</h2>
+        <div class="table-wrap">
+          <table id="departures">
+            <thead>
+              <tr>
+                <th style="width: 80px">Time</th>
+                <th>To</th>
+                <th style="width: 160px">Operator</th>
+                <th style="width: 80px">Track</th>
+              </tr>
+            </thead>
+            <tbody id="departures-body">
+              <tr class="placeholder">
+                <td colspan="4">Choose a station and click Show</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="events">
+        <details id="events-panel">
+          <summary>Operative events (ongoing) – Railway</summary>
+          <ul id="events-list" class="events-list">
+            <li class="placeholder">Loading when the page has loaded…</li>
+          </ul>
+        </details>
+      </section>
+    </main>
+
+    <div id="loader" class="loader" aria-hidden="true" hidden>
+      <div class="spinner"></div>
+      <div>Loading…</div>
+    </div>
+  </body>
+</html>
