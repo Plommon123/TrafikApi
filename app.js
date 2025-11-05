@@ -13,8 +13,11 @@
   const stationMap = new Map();
 
   function setLoading(isLoading) {
+    console.log('setLoading called with:', isLoading);
     loader.hidden = !isLoading;
+    loader.style.display = isLoading ? 'grid' : 'none';  // Explicit display control
     loader.setAttribute("aria-hidden", String(!isLoading));
+    console.log('loader.hidden:', loader.hidden);
   }
   function setStatus(msg, type = "") {
     statusEl.textContent = msg || "";
@@ -69,6 +72,10 @@
   async function loadStations() {
     setLoading(true);
     setStatus("Loading stations…");
+    
+    // Force loader to hide after 5 seconds as a fallback
+    setTimeout(() => setLoading(false), 5000);
+    
     try {
       api.tvAssertApiKey();
       const stations = await api.tvFetchStations();
