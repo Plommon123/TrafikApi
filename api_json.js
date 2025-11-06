@@ -87,7 +87,7 @@ async function tvFetchStations() {
   }));
 }
 
-async function tvFetchDepartures(sign) {
+async function tvFetchDepartures(sign) { 
   const query = {
     query: [{
       objecttype: "TrainAnnouncement",
@@ -99,15 +99,15 @@ async function tvFetchDepartures(sign) {
             OR: [
               {
                 AND: [
-                  { GT: { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } },
-                  { LT: { name: "AdvertisedTimeAtLocation", value: "$dateadd(14:00:00)" } }
+                  { GT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } ] },
+                  { LT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(02:00:00)" } ] }
                 ]
               },
-              { GT: { name: "EstimatedTimeAtLocation", value: "$now" } }
+              { GT: [ { name: "EstimatedTimeAtLocation", value: "$now" } ] }
             ]
           },
-          { EQ: { name: "LocationSignature", value: sign } },
-          { EQ: { name: "ActivityType", value: "Avgang" } }
+          { EQ: [ { name: "LocationSignature", value: sign } ] },
+          { EQ: [ { name: "ActivityType", value: "Ankomst" } ] }
         ]
       },
       INCLUDE: [
