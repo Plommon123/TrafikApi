@@ -21,10 +21,10 @@ async function tvRequest(query, opts = {}) {
   const jsonPayload = {
     request: {
       login: {
-        authenticationkey: key
+        authenticationkey: key,
       },
-      ...query
-    }
+      ...query,
+    },
   };
 
   const timeoutMs = typeof opts.timeoutMs === "number" ? opts.timeoutMs : 12000;
@@ -63,23 +63,25 @@ async function tvRequest(query, opts = {}) {
 
 async function tvFetchStations() {
   const query = {
-    query: [{
-      objecttype: "TrainStation",
-      schemaversion: "1",
-      filter: {},
-      include: [
-        "Prognosticated",
-        "AdvertisedLocationName",
-        "LocationSignature"
-      ]
-    }]
+    query: [
+      {
+        objecttype: "TrainStation",
+        schemaversion: "1",
+        filter: {},
+        include: [
+          "Prognosticated",
+          "AdvertisedLocationName",
+          "LocationSignature",
+        ],
+      },
+    ],
   };
-  
+
   const data = await tvRequest(query);
   // Log the response structure to debug
-  console.log('API Response:', JSON.stringify(data, null, 2));
+  console.log("API Response:", JSON.stringify(data, null, 2));
   const result = data?.RESPONSE?.RESULT?.[0]?.TrainStation || [];
-  console.log('Stations loaded:', result.length);  // Debug log
+  console.log("Stations loaded:", result.length); // Debug log
   return result.map((s) => ({
     name: s.AdvertisedLocationName,
     sign: s.LocationSignature,
@@ -87,33 +89,52 @@ async function tvFetchStations() {
   }));
 }
 
-async function tvFetchDepartures(sign) { 
+async function tvFetchDepartures(sign) {
   const query = {
-    query: [{
-      objecttype: "TrainAnnouncement",
-      orderby: "AdvertisedTimeAtLocation",
-      schemaversion: "1.9",
-      filter: {
-        AND: [
-          {
-            AND: [
-              { GT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } ] },
-              { LT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(2:00:00)" } ] }
-            ]
-          },
-          { EQ: [ { name: "LocationSignature", value: sign } ] },
-          { EQ: [ { name: "ActivityType", value: "Avgang" } ] }
-        ]
+    query: [
+      {
+        objecttype: "TrainAnnouncement",
+        orderby: "AdvertisedTimeAtLocation",
+        schemaversion: "1.9",
+        filter: {
+          AND: [
+            {
+              AND: [
+                {
+                  GT: [
+                    {
+                      name: "AdvertisedTimeAtLocation",
+                      value: "$dateadd(-00:15:00)",
+                    },
+                  ],
+                },
+                {
+                  LT: [
+                    {
+                      name: "AdvertisedTimeAtLocation",
+                      value: "$dateadd(04:00:00)",
+                    },
+                  ],
+                },
+              ],
+            },
+            { EQ: [{ name: "LocationSignature", value: sign }] },
+            { EQ: [{ name: "ActivityType", value: "Avgang" }] },
+          ],
+        },
+        INCLUDE: [
+          "InformationOwner",
+          "AdvertisedTimeAtLocation",
+          "EstimatedTimeAtLocation",
+          "TrackAtLocation",
+          "FromLocation",
+          "ToLocation",
+          "AdvertisedTrainIdent",
+          "Canceled",
+          "Deviation",
+        ],
       },
-      INCLUDE: [
-        "InformationOwner",
-        "AdvertisedTimeAtLocation",
-        "TrackAtLocation",
-        "FromLocation",
-        "ToLocation",
-        "EstimatedTimeAtLocation"
-      ]
-    }]
+    ],
   };
 
   const data = await tvRequest(query);
@@ -130,21 +151,23 @@ async function tvFetchOperativeEvents() {
   }
 
   const query = {
-    query: [{
-      objecttype: "OperativeEvent",
-      schemaversion: "1",
-      filter: {
-        AND: [
-          { EQ: { name: "EventState", value: "1" } },
-          {
-            OR: [
-              { EQ: { name: "EventTrafficType", value: "0" } },
-              { EQ: { name: "EventTrafficType", value: "2" } }
-            ]
-          }
-        ]
-      }
-    }]
+    query: [
+      {
+        objecttype: "OperativeEvent",
+        schemaversion: "1",
+        filter: {
+          AND: [
+            { EQ: { name: "EventState", value: "1" } },
+            {
+              OR: [
+                { EQ: { name: "EventTrafficType", value: "0" } },
+                { EQ: { name: "EventTrafficType", value: "2" } },
+              ],
+            },
+          ],
+        },
+      },
+    ],
   };
 
   try {
