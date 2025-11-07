@@ -92,22 +92,17 @@ async function tvFetchDepartures(sign) {
     query: [{
       objecttype: "TrainAnnouncement",
       orderby: "AdvertisedTimeAtLocation",
-      schemaversion: "1",
+      schemaversion: "1.9",
       filter: {
         AND: [
           {
-            OR: [
-              {
-                AND: [
-                  { GT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } ] },
-                  { LT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(02:00:00)" } ] }
-                ]
-              },
-              { GT: [ { name: "EstimatedTimeAtLocation", value: "$now" } ] }
+            AND: [
+              { GT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } ] },
+              { LT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(2:00:00)" } ] }
             ]
           },
           { EQ: [ { name: "LocationSignature", value: sign } ] },
-          { EQ: [ { name: "ActivityType", value: "Ankomst" } ] }
+          { EQ: [ { name: "ActivityType", value: "Avgang" } ] }
         ]
       },
       INCLUDE: [
