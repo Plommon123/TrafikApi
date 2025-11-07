@@ -3,69 +3,80 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Train info – Trafikverket</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Train info</title>
+    <link rel="stylesheet" href="nti lunch/styles/main.css" />
+    <link
+      rel="shortcut icon"
+      href="nti lunch/assets/images/favicon.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="overrides.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&family=JetBrains+Mono:wght@100..800&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"
+    />
     <script src="env.js" defer></script>
     <script src="api_json.js" defer></script>
+    <script src="scripts/theme_switcher.js" defer></script>
+    <script src="scripts/dropdown_moblie.js" defer></script>
     <script src="app.js" defer></script>
   </head>
-  <body>
-    <header class="site-header">
-      <h1>Train departures</h1>
-      <p class="sub">Data from Trafikverket's API</p>
+  <body data-theme="dark">
+    <header>
+      <a href="#" class="header-logo" data-tooltip="Home">
+        <img
+          class="header-logo__img"
+          src="nti lunch/assets/images/logo.png"
+          alt="Logo"
+        />
+      </a>
+      <div class="header-title">
+        <div class="header-title__content">
+          <h3 class="header-title__week">Departures</h3>
+          <p class="header-title__date" id="header-date"></p>
+        </div>
+      </div>
+      <div class="header-action">
+        <button
+          onclick="toggle_theme(this)"
+          class="header-action__item theme-switch"
+          data-tooltip="Light mode"
+          id="header-theme-switch"
+        >
+          <span class="icon">light_mode</span>
+        </button>
+      </div>
     </header>
-
     <main>
-      <section class="search">
-        <form id="search-form">
-          <label for="station-input">Station</label>
-          <input
-            id="station-input"
-            name="station"
-            list="stations"
-            autocomplete="off"
-            placeholder="Search station (e.g., Stockholm C)"
-          />
-          <datalist id="stations"></datalist>
-          <button id="search-btn" type="submit">Show</button>
-        </form>
+      <section
+        class="search"
+        style="
+          display: grid;
+          place-content: center;
+          margin-block: 1rem;
+          gap: 0.5rem;
+        "
+      >
         <div id="status" role="status" aria-live="polite"></div>
       </section>
-
-      <section class="results">
-        <h2>Departures</h2>
-        <div class="table-wrap">
-          <table id="departures">
-            <thead>
-              <tr>
-                <th style="width: 80px">Time</th>
-                <th>To</th>
-                <th style="width: 160px">Operator</th>
-                <th style="width: 80px">Track</th>
-              </tr>
-            </thead>
-            <tbody id="departures-body">
-              <tr class="placeholder">
-                <td colspan="4">Choose a station and click Show</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="events">
-        <details id="events-panel">
-          <summary>Operative events (ongoing) – Railway</summary>
-          <ul id="events-list" class="events-list">
-            <li class="placeholder">Loading when the page has loaded…</li>
-          </ul>
-        </details>
-      </section>
+      <div class="menu" id="menu"></div>
     </main>
-
-    <div id="loader" class="loader" aria-hidden="true" hidden>
-      <div class="spinner"></div>
-      <div>Loading…</div>
-    </div>
+    <footer>
+      <p class="footer-content">
+        Data by
+        <a href="https://www.trafikverket.se/" target="_blank" rel="noopener">
+          <img
+            src="assets/images/trafikverket.svg"
+            alt="Trafikverket"
+            style="height: 2rem; padding-bottom: 6px"
+          />
+        </a>
+      </p>
+      <p>Utvecklad av Svante, Filip, Sebastian & Felix - TE4</p>
+    </footer>
   </body>
 </html>

@@ -2,23 +2,12 @@
   const api = window.TrafikverketAPI;
   const qs = (sel, el = document) => el.querySelector(sel);
   const qsa = (sel, el = document) => [...el.querySelectorAll(sel)];
-
-  const loader = qs("#loader");
   const statusEl = qs("#status");
-  const stationInput = qs("#station-input");
-  const datalist = qs("#stations");
-  const tbody = qs("#departures-body");
-  const eventsList = qs("#events-list");
-
+  const stationInput = null;
+  const datalist = null;
+  const menuEl = qs("#menu");
   const stationMap = new Map();
 
-  function setLoading(isLoading) {
-    console.log('setLoading called with:', isLoading);
-    loader.hidden = !isLoading;
-    loader.style.display = isLoading ? 'grid' : 'none';  // Explicit display control
-    loader.setAttribute("aria-hidden", String(!isLoading));
-    console.log('loader.hidden:', loader.hidden);
-  }
   function setStatus(msg, type = "") {
     statusEl.textContent = msg || "";
     statusEl.className = type || "";
@@ -27,7 +16,11 @@
   function timeStr(iso) {
     const d = new Date(iso);
     if (Number.isNaN(+d)) return "";
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   }
 
   function resolveToNames(toLocation) {
@@ -48,151 +41,95 @@
   }
 
   function renderDepartures(items) {
-    tbody.innerHTML = "";
+    menuEl.innerHTML = "";
     if (!items || items.length === 0) {
-      const tr = document.createElement("tr");
-      tr.className = "placeholder";
-      tr.innerHTML = `<td colspan="4">No departures found</td>`;
-      tbody.appendChild(tr);
+      const empty = document.createElement("div");
+      empty.className = "menu-item";
+      empty.innerHTML = `<p class="menu-item__day">No departures</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>No trains found</span></p></div>`;
+      menuEl.appendChild(empty);
       return;
     }
     for (const it of items) {
-      const time = timeStr(
-        it.AdvertisedTimeAtLocation || it.EstimatedTimeAtLocation
-      );
+      const timeIso = it.AdvertisedTimeAtLocation || it.EstimatedTimeAtLocation;
+      const time = timeStr(timeIso);
       const to = resolveToNames(it.ToLocation).join(", ");
       const owner = it.InformationOwner || "";
       const track = it.TrackAtLocation || "";
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${time}</td><td>${to}</td><td>${owner}</td><td>${track}</td>`;
-      tbody.appendChild(tr);
+      const item = document.createElement("div");
+      item.className = "menu-item";
+      item.innerHTML = `<p class="menu-item__day">${time}</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🚆</span><span>${
+        to || "Unknown destination"
+      }</span></p><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>${owner}${
+        track ? ` • Track ${track}` : ""
+      }</span></p></div>`;
+      menuEl.appendChild(item);
+      const hr = document.createElement("hr");
+      hr.className = "menu__divider";
+      menuEl.appendChild(hr);
     }
+    if (menuEl.lastElementChild && menuEl.lastElementChild.tagName === "HR")
+      menuEl.removeChild(menuEl.lastElementChild);
   }
 
   async function loadStations() {
-    setLoading(true);
     setStatus("Loading stations…");
-    
-    // Force loader to hide after 5 seconds as a fallback
-    setTimeout(() => setLoading(false), 5000);
-    
     try {
       api.tvAssertApiKey();
       const stations = await api.tvFetchStations();
-      for (const s of stations) {
-        stationMap.set(s.sign, s.name);
-      }
-      const list = stations
-        .filter((s) => s.prognosticated)
-        .sort((a, b) => a.name.localeCompare(b.name));
-      datalist.innerHTML = "";
-      for (const s of list) {
-        const opt = document.createElement("option");
-        opt.value = s.name;
-        opt.label = s.sign;
-        opt.dataset.sign = s.sign;
-        datalist.appendChild(opt);
-      }
-      setStatus(`Ready – ${list.length} stations`, "success");
+      for (const s of stations) stationMap.set(s.sign, s.name);
+      setStatus("Ready", "success");
     } catch (err) {
       console.error(err);
       setStatus(err?.message || "Could not load stations", "error");
-    } finally {
-      setLoading(false);
     }
   }
 
-  function findSignatureFromInput() {
-    const val = stationInput.value.trim();
-    if (!val) return "";
-    const opt = qsa("option", datalist).find((o) => o.value === val);
-    if (opt?.dataset?.sign) return opt.dataset.sign;
-    if (stationMap.has(val.toUpperCase())) return val.toUpperCase();
-    const found = qsa("option", datalist).find(
-      (o) => o.value.toLowerCase() === val.toLowerCase()
+  function findSignatureForName(name) {
+    const entry = [...stationMap.entries()].find(
+      ([, n]) => n.toLowerCase() === name.toLowerCase()
     );
-    if (found?.dataset?.sign) return found.dataset.sign;
-    return "";
+    return entry ? entry[0] : "";
   }
 
-  async function onSearch(ev) {
-    ev.preventDefault();
-    const sign = findSignatureFromInput();
+  async function loadDeparturesFor(name) {
+    const sign = findSignatureForName(name);
     if (!sign) {
-      setStatus(
-        "Select a station from the list or enter a signature.",
-        "error"
-      );
-      stationInput.focus();
+      setStatus(`Station not found: ${name}`, "error");
+      renderDepartures([]);
       return;
     }
-    setLoading(true);
-    setStatus("Fetching departures…");
+    setStatus(`Fetching departures for ${name}…`);
     try {
       const data = await api.tvFetchDepartures(sign);
       renderDepartures(data);
-      setStatus(`Showing departures for ${stationMap.get(sign) || sign}`);
+      setStatus(`Showing departures for ${name}`);
     } catch (err) {
       console.error(err);
       renderDepartures([]);
       setStatus(err?.message || "Could not fetch departures", "error");
-    } finally {
-      setLoading(false);
     }
   }
 
-  async function loadEvents() {
-    try {
-      const events = await api.tvFetchOperativeEvents();
-      eventsList.innerHTML = "";
-      if (
-        window.FEATURES &&
-        window.FEATURES.OPERATIVE_EVENTS_AVAILABLE === false
-      ) {
-        const li = document.createElement("li");
-        li.className = "placeholder";
-        li.textContent = "Operative events are not available for your API key.";
-        eventsList.appendChild(li);
-        return;
+  document.addEventListener("DOMContentLoaded", async () => {
+    renderDepartures([]);
+    const dateEl = qs("#header-date");
+    if (dateEl) {
+      function updateDateTime() {
+        const d = new Date();
+        const iso = d.toISOString().slice(0, 10);
+        const time = d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        dateEl.textContent = `${iso} • ${time}`;
       }
-      if (!events || events.length === 0) {
-        const li = document.createElement("li");
-        li.className = "placeholder";
-        li.textContent = "No active events right now.";
-        eventsList.appendChild(li);
-        return;
-      }
-      for (const e of events.slice(0, 25)) {
-        const li = document.createElement("li");
-        li.className = "event-card";
-        const type = e.EventType?.Description || "Event";
-        const start = timeStr(e.StartDateTime);
-        const sections = (e.EventSection || [])
-          .map((sec) => {
-            const parts = [
-              sec.FromLocation?.Signature,
-              sec.ViaLocation?.Signature,
-              sec.ToLocation?.Signature,
-            ].filter(Boolean);
-            return parts.map((p) => stationMap.get(p) || p).join(" – ");
-          })
-          .filter(Boolean);
-        li.innerHTML = `<b>${type}</b> • start ${start}${
-          sections.length ? ` • ${sections.join("; ")}` : ""
-        }`;
-        eventsList.appendChild(li);
-      }
-    } catch (err) {
-      console.warn("Could not load events:", err?.message || err);
-      const li = document.createElement("li");
-      li.className = "placeholder";
-      li.textContent = "Could not load events.";
-      eventsList.appendChild(li);
+      updateDateTime();
+      setInterval(updateDateTime, 30000);
     }
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    qs("#search-form").addEventListener("submit", onSearch);
-    loadStations().then(loadEvents);
+    await loadStations();
+    await loadDeparturesFor("Västerås C");
+    // Full page refresh every minute (reinitializes everything including API + clock)
+    setInterval(() => window.location.reload(), 60000);
   });
 })();

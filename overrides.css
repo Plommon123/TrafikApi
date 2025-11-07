@@ -1,0 +1,36 @@
+html,
+body {
+  overflow-x: hidden;
+}
+main {
+  padding-bottom: 4rem;
+}
+footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+footer .footer-content img {
+  height: 1.9rem;
+}
+.menu {
+  font-size: 1.2rem;
+}
+header .header-logo__img {
+  max-width: 3.5rem;
+}
+footer .footer-content img {
+  height: 2.2rem;
+}
+
+/* Align Trafikverket logo vertically within its link */
+footer .footer-content a {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+footer .footer-content a img {
+  display: block; /* remove baseline gap under inline images */
+}
