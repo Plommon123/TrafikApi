@@ -87,7 +87,7 @@ async function tvFetchStations() {
   }));
 }
 
-async function tvFetchDepartures(sign) { 
+async function tvFetchDepartures(sign) {
   const query = {
     query: [{
       objecttype: "TrainAnnouncement",
@@ -97,21 +97,24 @@ async function tvFetchDepartures(sign) {
         AND: [
           {
             AND: [
-              { GT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" } ] },
-              { LT: [ { name: "AdvertisedTimeAtLocation", value: "$dateadd(2:00:00)" } ] }
+              { GT: [{ name: "AdvertisedTimeAtLocation", value: "$dateadd(-00:15:00)" }] },
+              { LT: [{ name: "AdvertisedTimeAtLocation", value: "$dateadd(04:00:00)" }] }
             ]
           },
-          { EQ: [ { name: "LocationSignature", value: sign } ] },
-          { EQ: [ { name: "ActivityType", value: "Avgang" } ] }
+          { EQ: [{ name: "LocationSignature", value: sign }] },
+          { EQ: [{ name: "ActivityType", value: "Avgang" }] }
         ]
       },
       INCLUDE: [
         "InformationOwner",
         "AdvertisedTimeAtLocation",
+        "EstimatedTimeAtLocation",
+        "AdvertisedTrainIdent",
         "TrackAtLocation",
+        "Canceled",
+        "Deviation",
         "FromLocation",
-        "ToLocation",
-        "EstimatedTimeAtLocation"
+        "ToLocation"
       ]
     }]
   };
@@ -119,6 +122,7 @@ async function tvFetchDepartures(sign) {
   const data = await tvRequest(query);
   return data?.RESPONSE?.RESULT?.[0]?.TrainAnnouncement || [];
 }
+
 
 async function tvFetchOperativeEvents() {
   if (window.ENV && window.ENV.DISABLE_OPERATIVE_EVENTS === true) {

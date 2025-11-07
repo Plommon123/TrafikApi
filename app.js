@@ -47,27 +47,55 @@
       .filter(Boolean);
   }
 
-  function renderDepartures(items) {
-    tbody.innerHTML = "";
-    if (!items || items.length === 0) {
-      const tr = document.createElement("tr");
-      tr.className = "placeholder";
-      tr.innerHTML = `<td colspan="4">No departures found</td>`;
-      tbody.appendChild(tr);
-      return;
-    }
-    for (const it of items) {
-      const time = timeStr(
-        it.AdvertisedTimeAtLocation || it.EstimatedTimeAtLocation
-      );
-      const to = resolveToNames(it.ToLocation).join(", ");
-      const owner = it.InformationOwner || "";
-      const track = it.TrackAtLocation || "";
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${time}</td><td>${to}</td><td>${owner}</td><td>${track}</td>`;
-      tbody.appendChild(tr);
-    }
+function renderDepartures(items) {
+  tbody.innerHTML = "";
+  if (!items || items.length === 0) {
+    const tr = document.createElement("tr");
+    tr.className = "placeholder";
+    tr.innerHTML = `<td colspan="6">Inga avgångar hittades</td>`;
+    tbody.appendChild(tr);
+    return;
   }
+
+  for (const it of items) {
+    console.log('Avgångsdata:', it);
+    const planned = it.AdvertisedTimeAtLocation;
+    const estimated = it.EstimatedTimeAtLocation;
+    const delayMin = estimated && planned
+      ? Math.round((new Date(estimated) - new Date(planned)) / 60000)
+      : 0;
+
+    const timeStrPlanned = timeStr(planned);
+    const timeStrEst = estimated ? timeStr(estimated) : "";
+
+    const to = resolveToNames(it.ToLocation).join(", ");
+    const owner = it.InformationOwner || "";
+    const track = it.TrackAtLocation || it.AdvertisedTrack || "";
+    const train = it.AdvertisedTrainIdent || "";
+    const canceled = it.Canceled ? "Inställt" : "";
+    const deviationText = (it.Deviation || [])
+      .map(d => (typeof d === "string" ? d : d.Description))
+      .filter(Boolean)
+      .join("; ");
+    const trackChange =
+      it.AdvertisedTrack && it.TrackAtLocation && it.AdvertisedTrack !== it.TrackAtLocation
+        ? `⚠️ Byte från spår ${it.AdvertisedTrack} till ${it.TrackAtLocation}`
+        : "";
+
+    const status = canceled || deviationText || trackChange || "";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${train}</td>
+      <td>${timeStrPlanned}${delayMin > 0 ? ` <span style=\"color:red;\">(+${delayMin} min → ${timeStrEst})</span>` : ""}</td>
+      <td>${to || "null"}</td>
+      <td>${owner || "null"}</td>
+      <td>${track || "null"}</td>
+      <td>${status || "null"}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
 
   async function loadStations() {
     setLoading(true);
