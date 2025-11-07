@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info</title>
+
+    <!--- Skapad av Filip & Felix T4 NTI Gymnasiet Västerås// 2025-11-07 --->
+
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            border: 0;
+            background-color: #1C1726;
+        }
+
+        iframe{
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body style="overflow:hidden">
+    <iframe src="https://lunch.itgvas.se/" title="Lunch" scrolling="no" id="infobox"></iframe>
+
+    <script>
+        let infobox = document.getElementById("infobox");
+        let counter = 4;
+        let time = 30000;
+
+
+        function infoSwitch(){
+            if(counter == 0){
+                infobox.src = "index.html";
+            }
+            
+            if(counter == 2){
+                infobox.src = "https://lunch.itgvas.se/";
+            }
+            counter -= 1;
+
+            if(counter < 0){
+                counter = 4;
+            }
+        }
+
+        setInterval(infoSwitch, time);
+    </script>
+</body>
+</html>

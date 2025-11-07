@@ -21,25 +21,50 @@ body {
     Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--text);
+  display: flex;
+  flex-direction: column;
 }
+
 .site-header {
   padding: 16px 20px;
   border-bottom: 1px solid #1e2a38;
   background: linear-gradient(180deg, #0d1520, #0a1119);
+  text-align: center;
 }
 .site-header h1 {
   margin: 0;
   font-size: 22px;
 }
-.site-header .sub {
+.site-header .hsub {
   margin: 2px 0 0;
   color: var(--muted);
   font-size: 13px;
 }
+
+.site-footer{
+  padding: 16px 20px;
+  border-bottom: 1px solid #1e2a38;
+  background: linear-gradient(180deg, #0d1520, #0a1119);
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 22px;
+}
+
+.site-footer .fsub{
+   margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  
+}
+
 main {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  flex: 1;
 }
 .search form {
   display: flex;
