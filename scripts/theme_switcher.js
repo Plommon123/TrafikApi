@@ -17,11 +17,11 @@ function setTheme(theme) {
     if (b.id === "header-theme-switch") {
       b.setAttribute(
         "data-tooltip",
-        theme === "dark" ? "Light mode" : "Dark mode"
+        theme === "dark" ? "Ljust läge" : "Mörkt läge"
       );
     }
   });
   const ddTitle = document.getElementById("dropdown-toggle-title");
   if (ddTitle)
-    ddTitle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+    ddTitle.textContent = theme === "dark" ? "Ljust läge" : "Mörkt läge";
 }

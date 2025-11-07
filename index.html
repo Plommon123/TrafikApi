@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Train info</title>
-    <link rel="stylesheet" href="nti lunch/styles/main.css" />
+    <title>Tåginfo</title>
+    <link rel="stylesheet" href="styles/main.css" />
     <link
       rel="shortcut icon"
-      href="nti lunch/assets/images/favicon.png"
+      href="assets/images/favicon.png"
       type="image/x-icon"
     />
     <link rel="stylesheet" href="overrides.css" />
@@ -27,16 +27,12 @@
   </head>
   <body data-theme="dark">
     <header>
-      <a href="#" class="header-logo" data-tooltip="Home">
-        <img
-          class="header-logo__img"
-          src="nti lunch/assets/images/logo.png"
-          alt="Logo"
-        />
+      <a href="#" class="header-logo" data-tooltip="Hem">
+        <img class="header-logo__img" src="assets/images/logo.png" alt="Logo" />
       </a>
       <div class="header-title">
         <div class="header-title__content">
-          <h3 class="header-title__week">Departures</h3>
+          <h3 class="header-title__week">Avgångar</h3>
           <p class="header-title__date" id="header-date"></p>
         </div>
       </div>
@@ -44,7 +40,7 @@
         <button
           onclick="toggle_theme(this)"
           class="header-action__item theme-switch"
-          data-tooltip="Light mode"
+          data-tooltip="Ljust läge"
           id="header-theme-switch"
         >
           <span class="icon">light_mode</span>
@@ -67,7 +63,7 @@
     </main>
     <footer>
       <p class="footer-content">
-        Data by
+        Data från
         <a href="https://www.trafikverket.se/" target="_blank" rel="noopener">
           <img
             src="assets/images/trafikverket.svg"

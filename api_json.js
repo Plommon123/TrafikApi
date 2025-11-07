@@ -9,14 +9,14 @@ function tvAssertApiKey() {
   const key = tvGetApiKey();
   if (!key) {
     const msg =
-      "API key missing. Add .env with API_KEY and generate env.js (see README).";
+      "API-nyckel saknas. Lägg till .env med API_KEY och generera env.js (se README).";
     console.warn(msg);
   }
 }
 
 async function tvRequest(query, opts = {}) {
   const key = tvGetApiKey();
-  if (!key) throw new Error("API_KEY is missing – see README to set it.");
+  if (!key) throw new Error("API-nyckel saknas – se README för instruktioner.");
 
   const jsonPayload = {
     request: {
@@ -42,7 +42,7 @@ async function tvRequest(query, opts = {}) {
   } catch (e) {
     if (e && e.name === "AbortError") {
       throw new Error(
-        "Request aborted (timeout). Check network or API status."
+        "Begäran avbröts (timeout). Kontrollera nätverk eller API-status."
       );
     }
     throw e;
@@ -57,7 +57,7 @@ async function tvRequest(query, opts = {}) {
     return await res.json();
   } catch (e) {
     const text = await res.text().catch(() => "");
-    throw new Error(`Could not parse response as JSON.\n${text}`);
+    throw new Error(`Kunde inte tolka svaret som JSON.\n${text}`);
   }
 }
 
@@ -112,7 +112,7 @@ async function tvFetchDepartures(sign) {
                   LT: [
                     {
                       name: "AdvertisedTimeAtLocation",
-                      value: "$dateadd(04:00:00)",
+                      value: "$dateadd(01:30:00)",
                     },
                   ],
                 },

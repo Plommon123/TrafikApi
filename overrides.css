@@ -25,6 +25,19 @@ footer .footer-content img {
   height: 2.2rem;
 }
 
+/* Emphasize the track row */
+.menu-item__track {
+  font-weight: 600;
+  margin: 0.15rem 0 0.25rem 0;
+  color: #ffffffcc; /* slightly muted white on dark theme */
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.menu-item__track .icon {
+  font-size: 1.05rem;
+}
+
 /* Align Trafikverket logo vertically within its link */
 footer .footer-content a {
   display: inline-flex;
@@ -32,5 +45,14 @@ footer .footer-content a {
   vertical-align: middle;
 }
 footer .footer-content a img {
+  /* Inline SVG icons inside .icon span */
+  .menu-item__meals-item .icon img,
+  .menu-item__meals-item .icon svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.45rem;
+  }
   display: block; /* remove baseline gap under inline images */
 }

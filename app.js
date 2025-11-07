@@ -45,7 +45,7 @@
     if (!items || items.length === 0) {
       const empty = document.createElement("div");
       empty.className = "menu-item";
-      empty.innerHTML = `<p class="menu-item__day">No departures</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>No trains found</span></p></div>`;
+      empty.innerHTML = `<p class="menu-item__day">Inga avgångar</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon"><img src="assets/images/info.svg" alt="info"/></span><span>Inga tåg hittades</span></p></div>`;
       menuEl.appendChild(empty);
       return;
     }
@@ -62,7 +62,7 @@
       const owner = it.InformationOwner || "";
       const track = it.TrackAtLocation || it.AdvertisedTrack || "";
       const train = it.AdvertisedTrainIdent || "";
-      const canceled = it.Canceled ? "Canceled" : "";
+      const canceled = it.Canceled ? "Inställt" : "";
       const deviationText = (it.Deviation || [])
         .map((d) => (typeof d === "string" ? d : d.Description))
         .filter(Boolean)
@@ -71,29 +71,36 @@
         it.AdvertisedTrack &&
         it.TrackAtLocation &&
         it.AdvertisedTrack !== it.TrackAtLocation
-          ? `Track change ${it.AdvertisedTrack}→${it.TrackAtLocation}`
+          ? `Byte från spår ${it.AdvertisedTrack} till ${it.TrackAtLocation}`
           : "";
       const status =
         canceled ||
         deviationText ||
         trackChange ||
-        (delayMin > 0 ? `Delayed ${delayMin} min` : "");
+        (delayMin > 0 ? `Försenad ${delayMin} min` : "");
 
       const item = document.createElement("div");
       item.className = "menu-item";
-      item.innerHTML = `<p class="menu-item__day">${plannedStr}${
+      item.innerHTML = `
+        <p class="menu-item__day">${plannedStr}${
         delayMin > 0
           ? ` <span style="color:#ff5252;">(+${delayMin} → ${estStr})</span>`
           : ""
-      }</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🚆</span><span>${
-        to || "Unknown destination"
-      }</span></p><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>${
-        train ? `${train} • ` : ""
-      }${owner}${track ? ` • Track ${track}` : ""}</span></p>${
-        status
-          ? `<p class="menu-item__meals-item"><span class="icon">⚠️</span><span>${status}</span></p>`
-          : ""
-      }</div>`;
+      }</p>
+        <span class="menu-item__divider"></span>
+        <div class="menu-item__meals">
+          <p class="menu-item__meals-item"><span class="icon"><img src="assets/images/train.svg" alt="train"/></span><span>${
+            to || "Okänt resmål"
+          }${track ? ` • Spår ${track}` : ""}</span></p>
+          <p class="menu-item__meals-item"><span class="icon"><img src="assets/images/info.svg" alt="info"/></span><span>${
+            train ? `${train} • ` : ""
+          }${owner}</span></p>
+              ${
+                status
+                  ? `<p class="menu-item__meals-item"><span class="icon"><img src="assets/images/caution.svg" alt="caution"/></span><span>${status}</span></p>`
+                  : ""
+              }
+        </div>`;
       menuEl.appendChild(item);
       const hr = document.createElement("hr");
       hr.className = "menu__divider";
@@ -105,15 +112,15 @@
   }
 
   async function loadStations() {
-    setStatus("Loading stations…");
+    setStatus("Hämtar stationer…");
     try {
       api.tvAssertApiKey();
       const stations = await api.tvFetchStations();
       for (const s of stations) stationMap.set(s.sign, s.name);
-      setStatus("Ready", "success");
+      setStatus("Klar", "success");
     } catch (err) {
       console.error(err);
-      setStatus(err?.message || "Could not load stations", "error");
+      setStatus(err?.message || "Kunde inte hämta stationer", "error");
     }
   }
 
@@ -127,11 +134,11 @@
   async function loadDeparturesFor(name) {
     const sign = findSignatureForName(name);
     if (!sign) {
-      setStatus(`Station not found: ${name}`, "error");
+      setStatus(`Station hittades inte: ${name}`, "error");
       renderDepartures([]);
       return;
     }
-    setStatus(`Fetching departures for ${name}…`);
+    setStatus(`Hämtar avgångar för ${name}…`);
     try {
       const data = await api.tvFetchDepartures(sign);
       // Remove trains that already departed (both advertised and estimated before now - small buffer)
@@ -150,11 +157,11 @@
         return latest >= nowMs - bufferMs;
       });
       renderDepartures(filtered);
-      setStatus(`Showing departures for ${name}`);
+      setStatus(`Visar avgångar för ${name}`);
     } catch (err) {
       console.error(err);
       renderDepartures([]);
-      setStatus(err?.message || "Could not fetch departures", "error");
+      setStatus(err?.message || "Kunde inte hämta avgångar", "error");
     }
   }
 
@@ -177,7 +184,7 @@
     }
     await loadStations();
     await loadDeparturesFor("Västerås C");
-    // Full page refresh every minute (reinitializes everything including API + clock)
-    setInterval(() => window.location.reload(), 60000);
+    // Full page refresh every two minutes (reinitializes everything including API + clock)
+    setInterval(() => window.location.reload(), 120000);
   });
 })();
