@@ -54,7 +54,10 @@
       const estimated = it.EstimatedTimeAtLocation;
       const plannedStr = timeStr(planned);
       const estStr = estimated ? timeStr(estimated) : "";
-      const delayMin = estimated && planned ? Math.round((new Date(estimated) - new Date(planned)) / 60000) : 0;
+      const delayMin =
+        estimated && planned
+          ? Math.round((new Date(estimated) - new Date(planned)) / 60000)
+          : 0;
       const to = resolveToNames(it.ToLocation).join(", ");
       const owner = it.InformationOwner || "";
       const track = it.TrackAtLocation || it.AdvertisedTrack || "";
@@ -64,18 +67,33 @@
         .map((d) => (typeof d === "string" ? d : d.Description))
         .filter(Boolean)
         .join("; ");
-      const trackChange = it.AdvertisedTrack && it.TrackAtLocation && it.AdvertisedTrack !== it.TrackAtLocation
-        ? `Track change ${it.AdvertisedTrack}→${it.TrackAtLocation}`
-        : "";
-      const status = canceled || deviationText || trackChange || (delayMin > 0 ? `Delayed ${delayMin} min` : "");
+      const trackChange =
+        it.AdvertisedTrack &&
+        it.TrackAtLocation &&
+        it.AdvertisedTrack !== it.TrackAtLocation
+          ? `Track change ${it.AdvertisedTrack}→${it.TrackAtLocation}`
+          : "";
+      const status =
+        canceled ||
+        deviationText ||
+        trackChange ||
+        (delayMin > 0 ? `Delayed ${delayMin} min` : "");
 
       const item = document.createElement("div");
       item.className = "menu-item";
-      item.innerHTML = `<p class="menu-item__day">${plannedStr}${delayMin > 0 ? ` <span style="color:#ff5252;">(+${delayMin} → ${estStr})</span>` : ""}</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🚆</span><span>${
+      item.innerHTML = `<p class="menu-item__day">${plannedStr}${
+        delayMin > 0
+          ? ` <span style="color:#ff5252;">(+${delayMin} → ${estStr})</span>`
+          : ""
+      }</p><span class="menu-item__divider"></span><div class="menu-item__meals"><p class="menu-item__meals-item"><span class="icon">🚆</span><span>${
         to || "Unknown destination"
-      }</span></p><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>${train ? `${train} • ` : ""}${owner}${
-        track ? ` • Track ${track}` : ""
-      }</span></p>${status ? `<p class="menu-item__meals-item"><span class="icon">⚠️</span><span>${status}</span></p>` : ""}</div>`;
+      }</span></p><p class="menu-item__meals-item"><span class="icon">🛤️</span><span>${
+        train ? `${train} • ` : ""
+      }${owner}${track ? ` • Track ${track}` : ""}</span></p>${
+        status
+          ? `<p class="menu-item__meals-item"><span class="icon">⚠️</span><span>${status}</span></p>`
+          : ""
+      }</div>`;
       menuEl.appendChild(item);
       const hr = document.createElement("hr");
       hr.className = "menu__divider";
@@ -120,8 +138,12 @@
       const bufferMs = 5 * 60 * 1000; // 5 minutes grace
       const nowMs = Date.now();
       const filtered = (data || []).filter((it) => {
-        const adv = it.AdvertisedTimeAtLocation ? Date.parse(it.AdvertisedTimeAtLocation) : NaN;
-        const est = it.EstimatedTimeAtLocation ? Date.parse(it.EstimatedTimeAtLocation) : NaN;
+        const adv = it.AdvertisedTimeAtLocation
+          ? Date.parse(it.AdvertisedTimeAtLocation)
+          : NaN;
+        const est = it.EstimatedTimeAtLocation
+          ? Date.parse(it.EstimatedTimeAtLocation)
+          : NaN;
         const latest = Math.max(isNaN(adv) ? 0 : adv, isNaN(est) ? 0 : est);
         // If we have no time info, keep the item; otherwise require latest >= now - buffer
         if (latest === 0) return true;
