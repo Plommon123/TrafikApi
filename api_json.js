@@ -104,7 +104,7 @@ async function tvFetchDepartures(sign) {
                   GT: [
                     {
                       name: "AdvertisedTimeAtLocation",
-                      value: "$dateadd(-00:15:00)",
+                      value: "$dateadd(-01:00:00)",
                     },
                   ],
                 },

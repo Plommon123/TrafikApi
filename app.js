@@ -88,10 +88,12 @@
           : ""
       }</p>
         <span class="menu-item__divider"></span>
+          <p class="menu-item__day"><span>${track}</span></p>
+        <span class="menu-item__divider"></span>
         <div class="menu-item__meals">
           <p class="menu-item__meals-item"><span class="icon"><img src="assets/images/train.svg" alt="train"/></span><span>${
             to || "Okänt resmål"
-          }${track ? ` • Spår ${track}` : ""}</span></p>
+          }</span></p>
           <p class="menu-item__meals-item"><span class="icon"><img src="assets/images/info.svg" alt="info"/></span><span>${
             train ? `${train} • ` : ""
           }${owner}</span></p>

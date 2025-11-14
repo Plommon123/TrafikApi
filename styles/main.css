@@ -291,9 +291,10 @@ main .menu {
   text-shadow: 0.15rem 0.15rem 0.15rem var(--shadow-300);
   font-size: 1.1rem;
   justify-items: center;
+  width: 45vw;
 }
 main .menu .menu-item {
-  grid-column: span 4;
+  grid-column: span 5;
   display: grid;
   grid-template-columns: subgrid;
   align-items: center;
@@ -1851,7 +1852,7 @@ footer .footer-credits {
 
 /* Make each menu item visually narrower and centered (two-thirds layout) */
 main .menu .menu-item {
-  max-width: 66vw; /* two-thirds of viewport width */
+  min-width: 66vw; /* two-thirds of viewport width */
   justify-self: center; /* center within the grid */
   width: 100%;
 }
@@ -1864,7 +1865,7 @@ main .menu .menu-item img {
   vertical-align: middle;
 }
 
-/* Slightly larger icons for the prominent train/info/caution symbols */
+/* Slightly larger icons for the prominent train/info/cauxtion symbols */
 main .menu .menu-item img.large-icon {
   width: 2rem;
 }
